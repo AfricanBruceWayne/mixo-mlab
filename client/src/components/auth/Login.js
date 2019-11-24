@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,11 +14,13 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import SignUp from './Signup';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link color="inherit" to="/">
         Mixo
       </Link>{' '}
       {new Date().getFullYear()}
@@ -30,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
+      background: "#ECE9E6",  /* fallback for old browsers */
+      background: "-webkit-linear-gradient(to right, #FFFFFF, #ECE9E6)",  /* Chrome 10-25, Safari 5.1-6 */
+      background: "linear-gradient(to right, #FFFFFF, #ECE9E6)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     },
   },
   paper: {
@@ -55,14 +61,15 @@ export default function SignIn() {
   const classes = useStyles();
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Router>
+      <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Log in
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -107,7 +114,7 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link to="/register" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -118,5 +125,20 @@ export default function SignIn() {
         <Copyright />
       </Box>
     </Container>
+
+    <Switch>
+        <Route path="/register">
+            <SignUp />
+        </Route>
+        <Route path="/">
+            <Home />
+        </Route>
+    </Switch>
+
+    </Router>
   );
+}
+
+function Home() {
+  return <h2>Welcome To Mixo</h2>;
 }

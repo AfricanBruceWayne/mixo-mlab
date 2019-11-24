@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,11 +12,13 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import Login from './Login';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright ©'} 
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link color="inherit" to="/">
         Mixo
       </Link>{' '}
       {new Date().getFullYear()}
@@ -28,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
+      background: "#ECE9E6",  /* fallback for old browsers */
+      background: "-webkit-linear-gradient(to right, #FFFFFF, #ECE9E6)",  /* Chrome 10-25, Safari 5.1-6 */
+      background: "linear-gradient(to right, #FFFFFF, #ECE9E6)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     },
   },
   paper: {
@@ -40,6 +46,9 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
+  extendedIcon: {
+    marginRight: theme.spacing(1)
+  },
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
@@ -51,12 +60,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignUp() {
 
-  const 
 
   const classes = useStyles();
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Router>
+        <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -125,7 +134,7 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link to="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
@@ -136,5 +145,20 @@ export default function SignUp() {
         <Copyright />
       </Box>
     </Container>
+
+    <Switch>
+        <Route path="/login">
+            <Login />
+        </Route>
+        <Route path="/">
+            <Home />
+        </Route>
+    </Switch>
+  
+    </Router>
   );
+}
+
+function Home() {
+  return <h2>Welcome To Mixo</h2>;
 }
