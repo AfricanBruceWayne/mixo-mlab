@@ -12,6 +12,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import Home from '../Home';
+
 import Login from './Login';
 
 function Copyright() {
@@ -157,8 +159,4 @@ export default function SignUp() {
   
     </Router>
   );
-}
-
-function Home() {
-  return <h2>Welcome To Mixo</h2>;
 }
