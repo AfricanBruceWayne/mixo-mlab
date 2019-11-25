@@ -12,8 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-import Home from '../Home';
-
 import Login from './Login';
 
 function Copyright() {
@@ -149,12 +147,7 @@ export default function SignUp() {
     </Container>
 
     <Switch>
-        <Route path="/login">
-            <Login />
-        </Route>
-        <Route path="/">
-            <Home />
-        </Route>
+        <Route path="/login" component={ Login } />
     </Switch>
   
     </Router>
