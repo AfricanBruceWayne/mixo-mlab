@@ -6,6 +6,8 @@ import {
     Link
 } from 'react-router-dom';
 
+import Home from './components/Home';
+
 import SignUp from './components/auth/Signup';
 import Login from './components/auth/Login';
 
@@ -45,8 +47,5 @@ function App() {
     );
 }
 
-function Home() {
-    return <h2>Welcome To Mixo</h2>;
-}
 
 export default App;
