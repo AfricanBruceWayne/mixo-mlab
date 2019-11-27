@@ -3,8 +3,12 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
 } from 'react-router-dom';
+import '../App.css';
+import {
+    CSSTransition,
+    TransitionGroup
+} from 'react-transition-group';
 import {
     Collapse,
     Navbar,
@@ -32,8 +36,8 @@ import Home from './Home';
 
     return (
         <Router>
-                 <div>
-          <Navbar color="light" light expand="md">
+        <div>
+          <Navbar style={{ marginBottom: "1rem" }} light expand="md">
             <Container>
                 <NavbarBrand href="/"> 
                 Mixo
@@ -80,14 +84,22 @@ import Home from './Home';
                 </Collapse>
             </Container>
           </Navbar>
-
-            <Switch>
-            <Route path="/comingsoon" component={ ComingSoon } />
-                <Route path="/register" component={ SignUp } />
-                <Route path="/login" component={ Login } />
-                <Route exact path="/" component={ Home } />
-            </Switch>
-
+        <Route render={({ location }) => (
+            <TransitionGroup>
+                <CSSTransition
+                    key={location.key}
+                    timeout={450}
+                    classNames="fade"
+                >
+                    <Switch>
+                        <Route path="/comingsoon" component={ ComingSoon } />
+                        <Route path="/register" component={ SignUp } />
+                        <Route path="/login" component={ Login } />
+                        <Route exact path="/" component={ Home } />
+                    </Switch>
+                </CSSTransition>
+            </TransitionGroup>
+        )} />
         </div>
         </Router>
    );
