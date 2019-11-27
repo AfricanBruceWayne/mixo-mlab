@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -30,14 +31,6 @@ function Copyright() {
 }
 
 const useStyles = makeStyles(theme => ({
-  '@global': {
-    body: {
-      backgroundColor: theme.palette.common.white,
-      background: "#ECE9E6",  /* fallback for old browsers */
-      background: "-webkit-linear-gradient(to right, #FFFFFF, #ECE9E6)",  /* Chrome 10-25, Safari 5.1-6 */
-      background: "linear-gradient(to right, #FFFFFF, #ECE9E6)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    },
-  },
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
