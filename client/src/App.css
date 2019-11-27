@@ -13,6 +13,8 @@ html {
 }
 
 body {
+  margin: 0;
+  padding: 0;
   color: #272727;
   font-family: 'Quicksand', serif;
   font-style: normal;
@@ -20,6 +22,42 @@ body {
   letter-spacing: 0;
   padding: 1rem;
 }
+
+.App {
+  text-align: center;
+  position: relative;
+}
+
+/* DEMO STYLES */
+.nav {
+  padding: 30px 0;
+}
+.nav a {
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  margin: 0 15px;
+  padding: 10px;
+  border: 1px rgba(255,255,255,0.5) solid;
+  transition: all 0.3s linear;
+  text-decoration: none;
+  color: #272727;
+}
+
+.nav a:hover {
+  border-bottom: solid 2px #e52d27;
+}
+
+.nav a.active {
+  background-color: #61DAFB;
+}
+
+section {
+  padding: 50px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 
 .main{
   max-width: 1200px;
@@ -39,21 +77,19 @@ img {
 }
 
 .btn {
-  color: #ffffff;
   padding: 0.8rem;
   font-size: 14px;
   text-transform: uppercase;
   border-radius: 4px;
   font-weight: 400;
-  display: block;
-  width: 100%;
+  background: linear-gradient(to right, #ed213a, #93291e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
 }
 
 .btn:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  color: #cbf3fdf6;
+  font-weight: 400;
 }
 
 .cards {
@@ -111,9 +147,24 @@ img {
   margin-bottom: 1.25rem;    
   font-weight: 400;
 }
-.made_by{
-  font-weight: 400;
-  font-size: 13px;
-  margin-top: 35px;
-  text-align: center;
+
+/* simple - enter transition 300ms, exit 150ms */
+.fade-appear,
+.fade-enter {
+    opacity: 0;
+    z-index: 1;
+}
+.fade-appear-active,
+.fade-enter.fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms linear 150ms;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+    opacity: 0;
+    transition: opacity 150ms linear;
 }
