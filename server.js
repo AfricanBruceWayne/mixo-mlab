@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 const chalk = require('chalk');
+const errorHandler = require('errorhandler');
 const session = require('express-session');
 const logger = require('morgan');
 const cors  =   require('cors');
