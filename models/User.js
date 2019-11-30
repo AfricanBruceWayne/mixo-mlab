@@ -15,7 +15,7 @@ const bcrypt = require('bcryptjs');
  */
 
 const UserSchema = new mongoose.Schema({
-    username: { type: String, lowercase: true, unique, required: [true, "Can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true },
+    username: { type: String, lowercase: true, unique, required: [true, "Can't be blank"], trim: true, minlength: 3, match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true },
     email: { type: String, lowercase: true, unique, required: [true, "Can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
     bio: String,
     image: String,

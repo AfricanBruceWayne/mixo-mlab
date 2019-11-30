@@ -2,8 +2,14 @@ const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
     body: String,
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    cocktail: { type: mongoose.Schema.Types.ObjectId, ref: 'Cocktail' }
+    createdAt: { type: Date, default: Date.now() },
+    author: { 
+        id: {
+            type: mongoose.Schema.Types.ObjectId, ref: 'User',
+            ref: "User"
+        },
+        username: String
+    },
 }, { timestamps: true });
 
 // Requires population of cocktail

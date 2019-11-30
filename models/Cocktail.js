@@ -8,7 +8,21 @@ const CocktailSchema = new mongoose.Schema({
     recipe: String,
     favouritesCount: { type: Number, default: 0 },
     tagList: [{ type: String }],
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    author: { 
+        id: {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'User'
+        },
+        username: String
+    },
+    comments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
+        }
+    ]
 }, { timestamps: true });
 
 CocktailSchema.methods.updateFavouriteCount = () => {
@@ -33,7 +47,8 @@ CocktailSchema.methods.toJSONFor = (user) => {
         tagList: this.tagList,
         favorited: user ? user.isFavorite(this._id) : false,
         favoritesCount: this.favoritesCount,
-        author: this.author.toProfileJSONFor(user)
+        author: this.author.toProfileJSONFor(user),
+        comments: this.comments
     };
 };
 
