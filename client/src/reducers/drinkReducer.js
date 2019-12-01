@@ -1,6 +1,7 @@
 import {
     GET_DRINKS,
     ADD_DRINK,
+    UPDATE_DRINK,
     DELETE_DRINK,
     DRINKS_LOADING
 } from '../actions/types';
@@ -27,6 +28,11 @@ export default function(state = initialState, action) {
         return {
           ...state,
           drinks: [action.payload, ...state.drinks]
+        };
+      case UPDATE_DRINK:
+        return {
+          ...state,
+          drinks: state.drinks.filter(drink => drink._id !== action.payload)
         };
       case DRINKS_LOADING:
         return {
