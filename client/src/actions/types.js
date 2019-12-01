@@ -1,5 +1,6 @@
-export const DRINKS = 'DRINKS';
+export const GET_DRINKS = 'DRINKS';
 export const ADD_DRINK = 'ADD_DRINK';
+export const UPDATE_DRINK = 'UPDATE_DRINK';
 export const DELETE_DRINK = 'DELETE_DRINK';
 export const DRINKS_LOADING = 'DRINKS_LOADING';
 export const USER_LOADING = "USER_LOADING";
