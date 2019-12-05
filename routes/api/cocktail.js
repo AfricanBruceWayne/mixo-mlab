@@ -143,7 +143,9 @@ router.post('/', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-// return a cocktail
+// @ route  GET api/cocktails
+// @ route  GET A cocktail
+// @ access  Public
 router.get('/:cocktail', auth.optional, (req, res, next) => {
   Promise.all([
     req.payload ? User.findById(req.payload.id) : null,
