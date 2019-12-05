@@ -40,7 +40,7 @@ export const addDrink = drink => (dispatch, getState) => {
 
 export const updateDrink = id  = (dispatch, getState) => {
     axios
-        .put(`/api/drinks/${id}`, tokenConfig(getState))
+        .put(`/api/cocktails/${id}`, tokenConfig(getState))
         .then(res => 
             dispatch({
                 type: UPDATE_DRINK,
