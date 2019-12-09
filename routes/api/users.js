@@ -4,7 +4,7 @@ var passport = require('passport');
 var User = require('../../models/User');
 var auth = require('../auth');
 
-router.get('/user', auth.required, (req, res, next) => {
+router.get('/', auth.required, (req, res, next) => {
   User.findById(req.payload.id).then((user) => {
     if(!user){ return res.sendStatus(401); }
 
@@ -12,7 +12,7 @@ router.get('/user', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-router.put('/user', auth.required, (req, res, next) => {
+router.put('/update', auth.required, (req, res, next) => {
   User.findById(req.payload.id).then((user) => {
     if(!user){ return res.sendStatus(401); }
 
@@ -39,7 +39,7 @@ router.put('/user', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-router.post('/users/login', (req, res, next) => {
+router.post('/login', (req, res, next) => {
   if(!req.body.user.email){
     return res.status(422).json({errors: {email: "can't be blank"}});
   }
@@ -60,7 +60,7 @@ router.post('/users/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/users', function(req, res, next){
+router.post('/', function(req, res, next){
   var user = new User();
 
   user.username = req.body.user.username;
