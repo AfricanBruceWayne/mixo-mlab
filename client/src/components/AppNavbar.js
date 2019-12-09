@@ -23,7 +23,8 @@ import {
     DropdownItem,
     Container
   } from 'reactstrap';
-
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import SignUp from './auth/Signup';
 import Login from './auth/Login';
 import Home from './Home';  
@@ -33,6 +34,10 @@ import Home from './Home';
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => setIsOpen(!isOpen);
+    
+    AppNavbar.propTypes = {
+        auth: PropTypes.object.isRequired
+    };
 
     return (
         <Router>
