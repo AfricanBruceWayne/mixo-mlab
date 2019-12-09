@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+
+import {
+  Avatar, Button, Container, CssBaseline, TextField, 
+  Typography, makeStyles, Link, Grid, Box 
+} from '@material-ui/core' ;
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+
+import PropTypes from 'prop-types';
+
+import { Alert } from 'reactstrap';
+import { useDispatch } from 'react-redux';
+import { login } from '../../actions/authActions';
+import { clearErrors, returnErrors } from '../../actions/errorActions';
 
 import SignUp from './Signup';
 
@@ -51,8 +51,41 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SignIn() {
+  
   const classes = useStyles();
 
+  SignIn.propTypes = {
+    isAuthenticated: PropTypes.bool,
+    error: PropTypes.object.isRequired,
+    login: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired
+  };
+
+  const dispatch = useDispatch();
+
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isFormValid()) { 
+      returnErrors(msg);
+      return; 
+    }
+    dispatch(login(userEmail, userPassword));
+    clearErrors();
+    return <Redirect to="/" />
+  }
+
+  function isFormValid() {
+    return (
+      userEmail == null || !userEmail.includes('@') ||
+      userPassword == null || userPassword.length < 6
+    );
+  }
+  
   return (
     <Router>
       <Container component="main" maxWidth="xs">
@@ -64,51 +97,57 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
-        <form className={classes.form} noValidate>
+        <Typography component="h6" variant="h6">
+        </Typography>
+        <form className={classes.form} noValidate
+          onSubmit = {handleSubmit}>
           <TextField
-            variant="outlined"
-            margin="normal"
+            type = "email"
+            variant = "outlined"
+            margin = "normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id = "email"
+            label = "Email Address"
+            name = "email"
+            autoComplete = "email"
             autoFocus
+            value = { userEmail }
+            onChange = {(e) => setUserEmail(e.target.value)}
           />
           <TextField
-            variant="outlined"
-            margin="normal"
+            variant = "outlined"
+            margin = "normal"
             required
             fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            name = "password"
+            value = { userPassword }
+            label = "Password"
+            type = "password"
+            id = "password"
+            autoComplete = "current-password"
+            onChange = {(e) => setUserPassword(e.target.value)}
           />
           <Button
-            type="submit"
+            type ="submit"
+            disabled = { loading }
+            block = { true }
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            {loading ? "Logging in.." : "Sign In"}
           </Button>
+          <Grid container justify="center">
+            <Grid item>
+              {/* Error Message */}
+            </Grid>
+          </Grid>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link to="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="/register" variant="body2">
+                  {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
           </Grid>
@@ -126,3 +165,4 @@ export default function SignIn() {
     </Router>
   );
 }
+
