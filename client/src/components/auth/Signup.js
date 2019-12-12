@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { BrowserRouter as Router, Route, Redirect , Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useHistory , Switch } from 'react-router-dom';
 import {
   Avatar, Button, Container, CssBaseline, TextField,
   Typography, makeStyles, Link, Grid, Box
@@ -57,11 +57,13 @@ export default function SignUp() {
 
   const classes = useStyles();
 
-  const [userUsername, setUserUsername] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const [userUsername, setUserUsername] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+
+  let history = useHistory();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -76,9 +78,10 @@ export default function SignUp() {
     };
 
     // Attempt to register
-    dispatch(register(newUser));
-    clearErrors();
-    return <Redirect to="/" />;
+    // dispatch(register(newUser));
+    // clearErrors();
+    console.log(newUser);
+    history.push("/");
   }
 
   function isFormValid() {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory, Route, Switch } from 'react-router-dom';
 
 import {
   Avatar, Button, Container, CssBaseline, TextField, 
@@ -68,15 +68,23 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
 
+  let history = useHistory();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) { 
       returnErrors(msg);
       return; 
     }
-    dispatch(login(userEmail, userPassword));
-    clearErrors();
-    return <Redirect to="/" />
+
+    // dispatch(login(userEmail, userPassword));
+    // clearErrors();
+    const loginUser = {
+      userEmail,
+      userPassword
+    };
+    console.log(loginUser);
+    history.push("/");
   }
 
   function isFormValid() {
