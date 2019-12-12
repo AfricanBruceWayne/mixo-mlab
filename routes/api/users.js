@@ -1,8 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-var User = require('../../models/User');
-var auth = require('../auth');
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const User = require('../../models/User');
+const auth = require('../auth');
 
 router.get('/', auth.required, (req, res, next) => {
   User.findById(req.payload.id).then((user) => {
@@ -39,37 +41,76 @@ router.put('/update', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-router.post('/login', (req, res, next) => {
-  if(!req.body.user.email){
-    return res.status(422).json({errors: {email: "can't be blank"}});
-  }
 
-  if(!req.body.user.password){
-    return res.status(422).json({errors: {password: "can't be blank"}});
-  }
 
-  passport.authenticate('local', {session: false}, (err, user, info) => {
-    if(err){ return next(err); }
+// @route   POST api/users
+// @desc    Register new user
+// @access  Public
+router.post('/', (req, res, next) => {
 
-    if(user){
-      user.token = user.generateJWT();
-      return res.json({user: user.toAuthJSON()});
-    } else {
-      return res.status(422).json(info);
-    }
-  })(req, res, next);
-});
+  const validationErrors = [];
+  const { username, email, password } = req.body;
 
-router.post('/', function(req, res, next){
-  var user = new User();
+  // Simple validation
+  if (!validator.isEmail(email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
+  if (!validator.isLength(password, { min: 6 })) validationErrors.push({ msg: 'Password must be at least 6 characters' });
 
-  user.username = req.body.user.username;
-  user.email = req.body.user.email;
-  user.setPassword(req.body.user.password);
+  User.findOne({ email })
+    .exec()
+    .then(existingUser => {
+      if (existingUser) 
+      {
+        return res.status(400).json({
+          msg: 'User already exists'
+        });
+      }
 
-  user.save().then(function(){
-    return res.json({user: user.toAuthJSON()});
-  }).catch(next);
+        const newUser = new User({
+          username,
+          email,
+          password
+        });
+
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if  (err)
+            {
+              return res.status(400).json({
+                error: 'Something went wrong, ' + err
+              });
+            } else 
+            {
+              newUser.password = hash;
+              newUser.save()
+                .then(user => {
+                  jwt.sign(
+                    { id: user.id },
+                    process.env.SESSION_SECRET,
+                    { expiresIn: 3600 },
+                    (err, token) => {
+                      if (err)
+                      {
+                        res.status(400).json({
+                          error: err
+                        });
+                      }
+                      res.status(201).json({
+                        token,
+                        user: 
+                        {
+                          id: user.id,
+                          username: user.username,
+                          email: user.email
+                        },
+                        msg: 'Account Created Successfully'
+                      });
+                    }
+                  )
+                });
+            }
+          });
+        });
+    });
 });
 
 module.exports = router;
