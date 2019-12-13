@@ -1,6 +1,8 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-const User = mongoose.model('User');
+const User = require('../models/User');
 
 const CocktailSchema = new mongoose.Schema({
     name: String,
@@ -24,6 +26,8 @@ const CocktailSchema = new mongoose.Schema({
         }
     ]
 }, { timestamps: true });
+
+CocktailSchema.plugin(uniqueValidator, { message: 'is already taken' });
 
 CocktailSchema.methods.updateFavouriteCount = () => {
     

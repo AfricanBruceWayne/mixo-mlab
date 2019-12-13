@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
@@ -5,7 +7,7 @@ const CommentSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now() },
     author: { 
         id: {
-            type: mongoose.Schema.Types.ObjectId, ref: 'User',
+            type: mongoose.Schema.Types.ObjectId, 
             ref: "User"
         },
         username: String
