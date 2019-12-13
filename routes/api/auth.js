@@ -1,8 +1,9 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const auth = require('../auth');
 
 // User Model
@@ -31,33 +32,21 @@ router.post('/login', (req, res) => {
 
             bcrypt.compare(password, user.password)
                 .then(isMatch => {
-                    if(!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+                    if(!isMatch) 
+                    return res.status(400).json({ 
+                        msg: 'Invalid credentials' 
+                    });
 
-                    jwt.sign(
-                        { id: user.id },
-                        process.env.SESSION_SECRET,
-                        { expiresIn: 3600 },
-                        (err, token) => {
-                            if (err)
-                            {
-                                return res.status(400).json({
-                                    msg: 'Authentication Failed: ' + err
-                                });
-                            }
-                            res.status(200).json({
-                                msg: 
-                                {
-                                    user: 
-                                    {
-                                        id: user.id,
-                                        name: user.username,
-                                        email: user.email
-                                    }
-                                },
-                                token: token
-                            });
+                    passport.authenticate('local', {session: false}, (err, user, info) => {
+                        if(err){ return next(err); }
+                    
+                        if(user){
+                          user.token = user.generateJWT();
+                          return res.json({user: user.toAuthJSON()});
+                        } else {
+                          return res.status(422).json(info);
                         }
-                    )
+                      })(req, res, next);
                 });
         });
 });
@@ -65,10 +54,15 @@ router.post('/login', (req, res) => {
 // @route   GET api/auth/user
 // @desc    Get user data
 // @access  Private
-router.get('/user', auth, (req, res) => {
-    User.findById(req.user.id)
-        .select('-password')
-        .then(user => res.json(user));
+router.get('/user', auth.required, (req, res, next) => {
+    User.findById(req.payload.id)
+       .then((user) => {
+           if (!user) 
+           {
+               return res.sendStatus(401);
+           }
+           return res.json({ user: user.toAuthJSON() });
+       }).catch(next);
 });
 
 

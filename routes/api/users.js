@@ -1,8 +1,8 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
 const validator = require('validator');
-const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const auth = require('../auth');
 
@@ -31,48 +31,56 @@ router.post('/register', (req, res, next) => {
         const newUser = new User({
           username,
           email,
-          password
+          setPassword(password);
         });
 
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if  (err)
-            {
-              return res.status(400).json({
-                error: 'Something went wrong, ' + err
-              });
-            } else 
-            {
-              newUser.password = hash;
-              newUser.save()
-                .then(user => {
-                  jwt.sign(
-                    { id: user.id },
-                    process.env.SESSION_SECRET,
-                    { expiresIn: 3600 },
-                    (err, token) => {
-                      if (err)
-                      {
-                        res.status(400).json({
-                          error: err
-                        });
-                      }
-                      res.status(201).json({
-                        token,
-                        user: 
-                        {
-                          id: user.id,
-                          username: user.username,
-                          email: user.email
-                        },
-                        msg: 'Account Created Successfully'
-                      });
-                    }
-                  )
-                });
-            }
-          });
-        });
+        newUser.save()
+          .then(() => {
+            return res.json({ 
+              newUser: newUser.toAuthJSON()
+             });
+          })
+          .catch(next);
+
+        // bcrypt.genSalt(10, (err, salt) => {
+        //   bcrypt.hash(newUser.password, salt, (err, hash) => {
+        //     if  (err)
+        //     {
+        //       return res.status(400).json({
+        //         error: 'Something went wrong, ' + err
+        //       });
+        //     } else 
+        //     {
+        //       newUser.password = hash;
+        //       newUser.save()
+        //         .then(user => {
+        //           jwt.sign(
+        //             { id: user.id },
+        //             process.env.SESSION_SECRET,
+        //             { expiresIn: 3600 },
+        //             (err, token) => {
+        //               if (err)
+        //               {
+        //                 res.status(400).json({
+        //                   error: err
+        //                 });
+        //               }
+        //               res.status(201).json({
+        //                 token,
+        //                 user: 
+        //                 {
+        //                   id: user.id,
+        //                   username: user.username,
+        //                   email: user.email
+        //                 },
+        //                 msg: 'Account Created Successfully'
+        //               });
+        //             }
+        //           )
+        //         });
+        //     }
+        //   });
+        // });
     });
 });
 
