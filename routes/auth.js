@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 *   The JWT authentication middleware authenticates callers 
 *   using a JWT. If the token is valid, req.user will be set 
@@ -7,12 +9,6 @@
 
 var jwt = require('express-jwt');
 var secret = require('../config').secret;
-
-// req (Object) - The express request object.
-// payload (Object) - An object with the JWT claims.
-// done (Function) - A function with signature function(err, secret) to be invoked when the secret is retrieved.
-// err (Any) - The error that occurred.
-// secret (String) - The secret to use to verify the JWT.
 
 function getTokenFromHeader(req){
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token' ||
