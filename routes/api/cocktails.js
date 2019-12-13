@@ -89,7 +89,7 @@ router.get('/', auth.optional, (req, res, next) => {
   }).catch(next);
 });
 
-router.get('/feed', auth.required, (req, res, next) => {
+router.get('/', auth.required, (req, res, next) => {
   var limit = 20;
   var offset = 0;
 
@@ -143,7 +143,7 @@ router.post('/', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-// @ route  GET api/cocktails
+// @ route  GET api/cocktails/:id
 // @ route  GET A cocktail
 // @ access  Public
 router.get('/:cocktail', auth.optional, (req, res, next) => {
