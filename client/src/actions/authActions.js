@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { returnErrors } from './errorActions';
 
 import { 
     USER_LOADED,
@@ -24,16 +23,16 @@ export const loadUser = () => (dispatch, getState) => {
                 type: USER_LOADED,
                 payload: res.data
             })
-        ).catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status));
+        ).catch((err) => {
             dispatch({
-                type: AUTH_ERROR
+                type: AUTH_ERROR,
+                payload: err.response.data
             });
         });
 };
 
 // Register User
-export const register = ({ username, email, password }) => dispatch => {
+export const registerUser = ({ newUserData, history }) => (dispatch) => {
     // Headers
     const config = {
       headers: {
@@ -42,28 +41,27 @@ export const register = ({ username, email, password }) => dispatch => {
     };
   
     // Request body
-    const body = JSON.stringify({ username, email, password });
+    const body = JSON.stringify({ newUserData });
   
     axios
       .post('/api/users/register', body, config)
-      .then(res =>
+      .then((res) => {
         dispatch({
           type: REGISTER_SUCCESS,
           payload: res.data
         })
-      )
-      .catch(err => {
-        dispatch(
-          returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL')
-        );
+        history.push('/');
+      })
+      .catch((err) => {
         dispatch({
-          type: REGISTER_FAIL
+          type: REGISTER_FAIL,
+          payload: err.response.data
         });
       });
   };
   
 // Login User
-export const login = ({ email, password }) => dispatch => {
+export const loginUser = ({ userData, history}) => (dispatch) => {
     // Headers
     const config = {
       headers: {
@@ -72,28 +70,27 @@ export const login = ({ email, password }) => dispatch => {
     };
   
 // Request body
-const body = JSON.stringify({ email, password });
+const body = JSON.stringify({ userData });
   
     axios
       .post('/api/auth/login', body, config)
-      .then(res =>
+      .then((res) => {
         dispatch({
           type: LOGIN_SUCCESS,
           payload: res.data
-        })
-      )
-      .catch(err => {
-        dispatch(
-          returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
-        );
+        });
+        history.push('/');
+      })
+      .catch((err) => {
         dispatch({
-          type: LOGIN_FAIL
+          type: LOGIN_FAIL,
+          payload: err.response.data
         });
       });
   };
   
 // Logout User
-export const logout = () => {
+export const logoutUser = () => {
     return {
         type: LOGOUT_SUCCESS
     };
