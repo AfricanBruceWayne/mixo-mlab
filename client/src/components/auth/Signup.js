@@ -9,8 +9,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Alert } from 'reactstrap';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { register } from '../../actions/authActions';
-import { returnErrors, clearErrors } from '../../actions/errorActions';
+import { registerUser } from '../../actions/authActions';
+import { returnErrors } from '../../actions/errorActions';
 
 import Home from '../Home';
 import Login from './Login';
@@ -53,9 +53,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignUp() {
 
-  const dispatch = useDispatch();
-
   const classes = useStyles();
+
+  const dispatch = useDispatch();
 
   const [userUsername, setUserUsername] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -68,20 +68,16 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) {
-      returnErrors(msg);
-      return ;
+      return returnErrors('Failed to create user: ' + msg, 401, null);
     }
+    setLoading(true);
     const newUser = {
       userUsername,
       userEmail,
       userPassword
     };
 
-    // Attempt to register
-    // dispatch(register(newUser));
-    // clearErrors();
-    console.log(newUser);
-    history.push("/");
+    dispatch(registerUser(newUser, history));
   }
 
   function isFormValid() {
@@ -157,7 +153,7 @@ export default function SignUp() {
             color="primary"
             className={classes.submit}
           >
-            {loading ? "Registering.." : "Sign Up"}
+            {loading ? "Registering..." : "Sign Up"}
           </Button>
           <Grid container justify="center">
             <Grid item>

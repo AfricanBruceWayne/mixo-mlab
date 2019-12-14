@@ -12,8 +12,8 @@ import PropTypes from 'prop-types';
 
 import { Alert } from 'reactstrap';
 import { useDispatch } from 'react-redux';
-import { login } from '../../actions/authActions';
-import { clearErrors, returnErrors } from '../../actions/errorActions';
+import { loginUser } from '../../actions/authActions';
+import { returnErrors } from '../../actions/errorActions';
 
 import SignUp from './Signup';
 
@@ -73,18 +73,14 @@ export default function SignIn() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid()) { 
-      returnErrors(msg);
-      return; 
+      return returnErrors('Failed to login user: ' + msg, 401, null);
     }
-
-    // dispatch(login(userEmail, userPassword));
-    // clearErrors();
-    const loginUser = {
+    setLoading(true);
+    const loginData = {
       userEmail,
       userPassword
     };
-    console.log(loginUser);
-    history.push("/");
+    dispatch(loginUser(loginData, history));
   }
 
   function isFormValid() {
