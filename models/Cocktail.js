@@ -56,4 +56,6 @@ CocktailSchema.methods.toJSONFor = (user) => {
     };
 };
 
-module.exports = Cocktail = mongoose.model('Cocktail', CocktailSchema);
+const Cocktail = mongoose.model('Cocktail', CocktailSchema);
+
+module.exports = Cocktail;

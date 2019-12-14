@@ -14,8 +14,8 @@ const jwt = require('jsonwebtoken');
  */
 
 const UserSchema = new mongoose.Schema({
-    username: { type: String, lowercase: true, unique, required: [true, "Can't be blank"], trim: true, minlength: 3, match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true },
-    email: { type: String, lowercase: true, unique, required: [true, "Can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
+    username: { type: String, lowercase: true, unique: true, required: [true, "Can't be blank"], trim: true, minlength: 3, match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true },
+    email: { type: String, lowercase: true, unique: true, required: [true, "Can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
     bio: String,
     image: String,
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cocktail' }],
@@ -107,7 +107,9 @@ UserSchema.methods.isFollowing = (id) => {
   });
 };
 
-module.exports = User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+
+module.exports = User;
 
 
 
