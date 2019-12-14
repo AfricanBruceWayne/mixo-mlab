@@ -23,7 +23,7 @@ import {
     DropdownItem,
     Container
   } from 'reactstrap';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import SignUp from './auth/Signup';
 import Login from './auth/Login';
