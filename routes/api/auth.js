@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-const validator = require('validator');
 const passport = require('passport');
 const auth = require('../auth');
 
@@ -15,11 +14,6 @@ const User = require('../../models/User');
 router.post('/login', (req, res) => {
 
     const { email, password } = req.body;
-    const validationErrors = [];
-
-    // Simple validation
-    if (!validator.isEmail(email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
-    if (!validator.isLength(password, { min: 6 })) validationErrors.push({ msg: 'Password must be at least 6 characters' });
 
     if (!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
