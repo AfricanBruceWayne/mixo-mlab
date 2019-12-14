@@ -56,6 +56,11 @@ app.use(session({
     cookie: { maxAge: 1209600000 }
 }));
 
+// Use Routes
+app.use('/api/cocktails', require('./routes/api/cocktails'));
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/auth', require('./routes/api/auth'));
+
 // Serve static assets if in production
 if (isProduction)
 {
