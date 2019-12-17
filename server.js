@@ -24,6 +24,7 @@ var authRoutes = require('./routes/api/auth'),
     cocktailRoutes = require('./routes/api/cocktails'),
     commentRoutes = require('./routes/api/comments'),
     profileRoutes = require('./routes/api/profiles'),
+    indexRoutes = require('./routes/api/index'),
     favouriteRoutes = require('./routes/api/favourites');
 
 /*
@@ -73,6 +74,8 @@ app.use('/api/users/:id/followers', profileRoutes);
 app.use('/api/cocktails', cocktailRoutes);
 app.use('/api/cocktails/:id/comments', commentRoutes);
 app.use('/api/cocktails/:id/favourites', favouriteRoutes);
+app.use('/api/home', indexRoutes);
+
 
 
 // Serve static assets if in production
