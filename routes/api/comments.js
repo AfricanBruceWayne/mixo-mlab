@@ -3,22 +3,8 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../../models/User');
-var Cocktail = require('../../models/Cocktail');
 var Comment = require('../../models/Comment');
 var auth = require('../auth');
-
-// Preload cocktail objects on routes with ':cocktail'
-router.param('cocktail', (req, res, next) => {  
-    Cocktail.find()
-      .populate('author')
-      .then((cocktail) => {
-        if (!cocktail) { return res.sendStatus(404); }
-  
-        req.cocktail = cocktail;
-  
-        return next();
-      }).catch(next);
-  });
   
 router.param('comment', (req, res, next, id) => {
 Comment.findById(id).then((comment) => {

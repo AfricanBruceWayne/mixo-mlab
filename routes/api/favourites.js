@@ -21,7 +21,7 @@ router.post('/', auth.required, (req, res, next) => {
 });
   
 // Unfavorite an cocktail
-router.delete('/:favourite', auth.required, (req, res, next) => {
+router.delete('/:id', auth.required, (req, res, next) => {
     var cocktailId = req.cocktail._id;
 
     User.findById(req.payload.id).then((user) => {

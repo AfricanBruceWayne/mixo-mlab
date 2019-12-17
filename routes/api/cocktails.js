@@ -3,7 +3,6 @@
 var express = require('express');
 var router = express.Router();
 var Cocktail = require('../../models/Cocktail');
-var Comment = require('../../models/Comment');
 var User = require('../../models/User');
 var auth = require('../auth');
 
@@ -18,16 +17,6 @@ router.param('cocktail', (req, res, next) => {
 
       return next();
     }).catch(next);
-});
-
-router.param('comment', (req, res, next, id) => {
-  Comment.findById(id).then((comment) => {
-    if(!comment) { return res.sendStatus(404); }
-
-    req.comment = comment;
-
-    return next();
-  }).catch(next);
 });
 
 // @ route  GET api/cocktails
@@ -91,41 +80,7 @@ router.get('/', auth.optional, (req, res, next) => {
   }).catch(next);
 });
 
-router.get('/feed', auth.required, (req, res, next) => {
-  var limit = 20;
-  var offset = 0;
 
-  if(typeof req.query.limit !== 'undefined'){
-    limit = req.query.limit;
-  }
-
-  if(typeof req.query.offset !== 'undefined'){
-    offset = req.query.offset;
-  }
-
-  User.findById(req.payload.id).then((user) => {
-    if (!user) { return res.sendStatus(401); }
-
-    Promise.all([
-      Cocktail.find({ author: {$in: user.following}})
-        .limit(Number(limit))
-        .skip(Number(offset))
-        .populate('author')
-        .exec(),
-      Cocktail.count({ author: {$in: user.following}})
-    ]).then((results) => {
-      var cocktails = results[0];
-      var cocktailsCount = results[1];
-
-      return res.json({
-        cocktails: cocktails.map((cocktail) => {
-          return cocktail.toJSONFor(user);
-        }),
-        cocktailsCount: cocktailsCount
-      });
-    }).catch(next);
-  });
-});
 
 // @ route   POST api/cocktails
 // @ desc    Create a cocktail
@@ -146,16 +101,25 @@ router.post('/', auth.required, (req, res, next) => {
 });
 
 // @ route  GET api/cocktails/:id
-// @ route  GET A cocktail
+// @ route  GET A cocktail and comments
 // @ access  Public
 router.get('/:cocktail', auth.optional, (req, res, next) => {
-  Promise.all([
-    req.payload ? User.findById(req.payload.id) : null,
-    req.cocktail.populate('author').execPopulate()
-  ]).then((results) => {
-    var user = results[0];
-
-    return res.json({cocktail: req.cocktail.toJSONFor(user)});
+  Promise.resolve(req.payload ? User.findById(req.payload.id) : null).then((user) => {
+    return req.cocktail.populate({
+      path: 'comments',
+      populate: {
+        path: 'author'
+      },
+      options: {
+        sort: {
+          createdAt: 'desc'
+        }
+      }
+    }).execPopulate().then((cocktail) => {
+      return res.json({comments: req.cocktail.comments.map((comment) => {
+        return comment.toJSONFor(user);
+      })});
+    });
   }).catch(next);
 });
 
@@ -173,8 +137,8 @@ router.put('/:cocktail', auth.required, (req, res, next) => {
         req.cocktail.description = req.body.cocktail.description;
       }
 
-      if(typeof req.body.cocktail.body !== 'undefined'){
-        req.cocktail.body = req.body.cocktail.body;
+      if(typeof req.body.cocktail.recipe !== 'undefined'){
+        req.cocktail.recipe = req.body.cocktail.recipe;
       }
 
       if(typeof req.body.cocktail.tagList !== 'undefined'){
@@ -206,27 +170,5 @@ router.delete('/:cocktail', auth.required, (req, res, next) => {
     }
   }).catch(next);
 });
-
-// return an cocktail's comments
-router.get('/:cocktail/comments', auth.optional, (req, res, next) => {
-  Promise.resolve(req.payload ? User.findById(req.payload.id) : null).then((user) => {
-    return req.cocktail.populate({
-      path: 'comments',
-      populate: {
-        path: 'author'
-      },
-      options: {
-        sort: {
-          createdAt: 'desc'
-        }
-      }
-    }).execPopulate().then((cocktail) => {
-      return res.json({comments: req.cocktail.comments.map((comment) => {
-        return comment.toJSONFor(user);
-      })});
-    });
-  }).catch(next);
-});
-
 
 module.exports = router;
