@@ -91,7 +91,7 @@ router.get('/', auth.optional, (req, res, next) => {
   }).catch(next);
 });
 
-router.get('/', auth.required, (req, res, next) => {
+router.get('/feed', auth.required, (req, res, next) => {
   var limit = 20;
   var offset = 0;
 
@@ -207,36 +207,6 @@ router.delete('/:cocktail', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-// Favorite an cocktail
-router.post('/:cocktail/favorite', auth.required, (req, res, next) => {
-  var cocktailId = req.cocktail._id;
-
-  User.findById(req.payload.id).then((user) => {
-    if (!user) { return res.sendStatus(401); }
-
-    return user.favorite(cocktailId).then(() => {
-      return req.cocktail.updateFavoriteCount().then((cocktail) => {
-        return res.json({cocktail: cocktail.toJSONFor(user)});
-      });
-    });
-  }).catch(next);
-});
-
-// Unfavorite an cocktail
-router.delete('/:cocktail/favorite', auth.required, (req, res, next) => {
-  var cocktailId = req.cocktail._id;
-
-  User.findById(req.payload.id).then( (user) => {
-    if (!user) { return res.sendStatus(401); }
-
-    return user.unfavorite(cocktailId).then(() => {
-      return req.cocktail.updateFavoriteCount().then((cocktail) => {
-        return res.json({cocktail: cocktail.toJSONFor(user)});
-      });
-    });
-  }).catch(next);
-});
-
 // return an cocktail's comments
 router.get('/:cocktail/comments', auth.optional, (req, res, next) => {
   Promise.resolve(req.payload ? User.findById(req.payload.id) : null).then((user) => {
@@ -258,36 +228,5 @@ router.get('/:cocktail/comments', auth.optional, (req, res, next) => {
   }).catch(next);
 });
 
-// create a new comment
-router.post('/:cocktail/comments', auth.required, (req, res, next) => {
-  User.findById(req.payload.id).then((user) => {
-    if(!user){ return res.sendStatus(401); }
-
-    var comment = new Comment(req.body.comment);
-    comment.cocktail = req.cocktail;
-    comment.author = user;
-
-    return comment.save().then(() => {
-      req.cocktail.comments.push(comment);
-
-      return req.cocktail.save().then((cocktail) => {
-        res.json({comment: comment.toJSONFor(user)});
-      });
-    });
-  }).catch(next);
-});
-
-router.delete('/:cocktail/comments/:comment', auth.required, (req, res, next) => {
-  if(req.comment.author.toString() === req.payload.id.toString()){
-    req.cocktail.comments.remove(req.comment._id);
-    req.cocktail.save()
-      .then(Comment.find({_id: req.comment._id}).remove().exec())
-      .then(() => {
-        res.sendStatus(204);
-      });
-  } else {
-    res.sendStatus(403);
-  }
-});
 
 module.exports = router;

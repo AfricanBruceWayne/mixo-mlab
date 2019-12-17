@@ -40,7 +40,7 @@ router.post('/:username/follow', auth.required, (req, res, next) => {
   }).catch(next);
 });
 
-router.delete('/:username/follow', auth.required, (req, res, next) => {
+router.delete('/:username/unfollow', auth.required, (req, res, next) => {
   var profileId = req.profile._id;
 
   User.findById(req.payload.id).then((user) => {
