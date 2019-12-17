@@ -17,6 +17,16 @@ var isProduction = process.env.NODE_ENV === 'production';
 dotenv.config({ path: '.env' });
 
 /*
+*   Require routes
+*/
+var authRoutes = require('./routes/api/auth'),
+    userRoutes = require('./routes/api/users'),
+    cocktailRoutes = require('./routes/api/cocktails'),
+    commentRoutes = require('./routes/api/comments'),
+    profileRoutes = require('./routes/api/profiles'),
+    favouriteRoutes = require('./routes/api/favourites');
+
+/*
 * Connect to Mongo
 */
 
@@ -57,9 +67,13 @@ app.use(session({
 }));
 
 // Use Routes
-app.use('/api/cocktails', require('./routes/api/cocktails'));
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/users/:id/followers', profileRoutes);
+app.use('/api/cocktails', cocktailRoutes);
+app.use('/api/cocktails/:id/comments', commentRoutes);
+app.use('/api/cocktails/:id/favourites', favouriteRoutes);
+
 
 // Serve static assets if in production
 if (isProduction)
