@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, useHistory, Route, Switch } from 'react-router-dom';
 
 import {
-  Avatar, Button, Container, CssBaseline, TextField, 
-  Typography, makeStyles, Link, Grid, Box 
+  Avatar, Button, Container, CssBaseline, TextField, CircularProgress,
+  Typography, Link, Grid, Box 
 } from '@material-ui/core' ;
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
+import useStyles from '../../util/styles';
+
 import PropTypes from 'prop-types';
 
-import { Alert } from 'reactstrap';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../actions/authActions';
 import { returnErrors } from '../../actions/errorActions';
@@ -30,25 +31,7 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+
 
 export default function SignIn() {
   
@@ -67,6 +50,7 @@ export default function SignIn() {
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+  const errors = useState({});
 
   let history = useHistory();
 
@@ -117,6 +101,7 @@ export default function SignIn() {
             autoComplete = "email"
             autoFocus
             value = { userEmail }
+            error={errors.userEmail ? true : false}
             onChange = {(e) => setUserEmail(e.target.value)}
           />
           <TextField
@@ -129,9 +114,15 @@ export default function SignIn() {
             label = "Password"
             type = "password"
             id = "password"
+            error={errors.userPassword ? true : false}
             autoComplete = "current-password"
             onChange = {(e) => setUserPassword(e.target.value)}
           />
+            { errors.general && (
+              <Typography variant="body2" className={classes.customError}>
+              {errors.general}
+            </Typography>
+            )}
           <Button
             type ="submit"
             disabled = { loading }
@@ -142,12 +133,11 @@ export default function SignIn() {
             className={classes.submit}
           >
             {loading ? "Logging in.." : "Sign In"}
+            {loading && (
+              <CircularProgress size={30} className={classes.progress} />
+            )}
           </Button>
-          <Grid container justify="center">
-            <Grid item>
-              {/* Error Message */}
-            </Grid>
-          </Grid>
+          <br />
           <Grid container>
             <Grid item xs>
               <Link href="/register" variant="body2">

@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 
 import { BrowserRouter as Router, Route, useHistory , Switch } from 'react-router-dom';
 import {
-  Avatar, Button, Container, CssBaseline, TextField,
-  Typography, makeStyles, Link, Grid, Box
+  Avatar, Button, Container, CssBaseline, TextField, CircularProgress,
+  Typography, Link, Grid, Box
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { Alert } from 'reactstrap';
+
 import { useDispatch } from 'react-redux';
+
+import useStyles from '../../util/styles';
+
 import PropTypes from 'prop-types';
 import { registerUser } from '../../actions/authActions';
 import { returnErrors } from '../../actions/errorActions';
@@ -28,29 +31,6 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(1)
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  }
-}));
-
 export default function SignUp() {
 
   const classes = useStyles();
@@ -62,6 +42,7 @@ export default function SignUp() {
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+  const errors = useState({});
 
   let history = useHistory();
 
@@ -113,6 +94,7 @@ export default function SignUp() {
                 id="userName"
                 label="Username"
                 value={userUsername}
+                error={errors.userUsername}
                 autoFocus
                 onChange={(e) => setUserUsername(e.target.value)}
               />
@@ -126,6 +108,7 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 value={userEmail}
+                error={errors.userEmail}
                 onChange={(e) => setUserEmail(e.target.value)}
                 autoComplete="email"
               />
@@ -141,10 +124,16 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 value={userPassword}
+                error={errors.userPassword}
                 onChange={(e) => setUserPassword(e.target.value)}
               />
             </Grid>
           </Grid>
+          { errors.general && (
+            <Typography variant="body2" className={classes.customError}>
+              {errors.general}
+            </Typography>
+          )}
           <Button
             type="submit"
             fullWidth
@@ -154,12 +143,11 @@ export default function SignUp() {
             className={classes.submit}
           >
             {loading ? "Registering..." : "Sign Up"}
+            {loading && (
+              <CircularProgress size={30} className={classes.progress} />
+            )}
           </Button>
-          <Grid container justify="center">
-            <Grid item>
-              {/* Error Message */}
-            </Grid>
-          </Grid>
+          <br />
           <Grid container justify="flex-end">
             <Grid item>
               <Link href="/login" variant="body2">
