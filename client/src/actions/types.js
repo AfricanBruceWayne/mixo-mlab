@@ -1,5 +1,6 @@
 // Data reducer types
 export const GET_DRINKS = 'DRINKS';
+export const GET_DRINK = 'DRINK';
 export const ADD_DRINK = 'ADD_DRINK';
 export const UPDATE_DRINK = 'UPDATE_DRINK';
 export const DELETE_DRINK = 'DELETE_DRINK';
