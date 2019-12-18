@@ -74,7 +74,7 @@ app.use('/api/users/:id/followers', profileRoutes);
 app.use('/api/cocktails', cocktailRoutes);
 app.use('/api/cocktails/:id/comments', commentRoutes);
 app.use('/api/cocktails/:id/favourites', favouriteRoutes);
-app.use('/api/home', indexRoutes);
+app.use('/api/feed', indexRoutes);
 
 
 
