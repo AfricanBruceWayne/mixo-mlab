@@ -3,8 +3,7 @@ import {
     GET_DRINKS, ADD_DRINK, UPDATE_DRINK, DELETE_DRINK,
     DRINKS_LOADING, LOADING_DATA,
     LIKE_DRINK, UNLIKE_DRINK,
-    SUBMIT_COMMENT,
-    GET_ERRORS, CLEAR_ERRORS
+    SUBMIT_COMMENT
  } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors, clearErrors } from './errorActions';
@@ -73,7 +72,7 @@ export const updateDrink = (drinkId)  = (dispatch, getState) => {
 };
 
 // Delete A Drink
-export const deleteDrink = id => (dispatch, getState) => {
+export const deleteDrink = (id) => (dispatch, getState) => {
     axios
         .delete(`/api/cocktails/${id}`, tokenConfig(getState))
         .then(() => {
@@ -82,15 +81,15 @@ export const deleteDrink = id => (dispatch, getState) => {
                 payload: id
             });
         })
-        .catch(err =>
+        .catch((err) =>
             dispatch(returnErrors(err.response.data, err.response.status))
         );
 };
 
 // Favourite A Drink
-export const likeDrink = (drinkId) => (dispatch) => {
+export const likeDrink = (drinkId) => (dispatch, getState) => {
 axios
-    .get(`/api/cocktail/${drinkId}/favourite`)
+    .get(`/api/cocktail/${drinkId}/favourite`, tokenConfig(getState))
     .then((res) => {
     dispatch({
         type: LIKE_DRINK,
@@ -101,9 +100,9 @@ axios
 };
 
 // Unfavourite A Drink
-export const unlikeDrink = (drinkId) => (dispatch) => {
+export const unlikeDrink = (drinkId) => (dispatch, getState) => {
 axios
-    .get(`/api/cocktail/${cocktailId}/unfavourite`)
+    .get(`/api/cocktail/${drinkId}/unfavourite`, tokenConfig(getState))
     .then((res) => {
     dispatch({
         type: UNLIKE_DRINK,
@@ -114,9 +113,9 @@ axios
 };
 
   // Submit a comment
-  export const submitComment = (drinkId, commentData) => (dispatch) => {
+  export const submitComment = (drinkId, commentData) => (dispatch, getState) => {
     axios
-      .post(`/api/cocktail/${drinkId}/comment`, commentData)
+      .post(`/api/cocktail/${drinkId}/comment`, commentData, tokenConfig(getState))
       .then((res) => {
         dispatch({
           type: SUBMIT_COMMENT,
