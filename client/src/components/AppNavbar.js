@@ -5,26 +5,20 @@ import {
     Route,
 } from 'react-router-dom';
 import '../App.css';
-import {
-    CSSTransition,
-    TransitionGroup
-} from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import {
     Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
+    Navbar, NavbarToggler, NavbarBrand,
+    Nav, NavItem, NavLink,
     UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
+    DropdownToggle, DropdownMenu, DropdownItem, 
     Container
   } from 'reactstrap';
+
 import { useDispatch } from 'react-redux';
+
 import PropTypes from 'prop-types';
+
 import SignUp from './auth/Signup';
 import Login from './auth/Login';
 import Home from './Home';  
