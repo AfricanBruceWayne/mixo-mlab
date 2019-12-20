@@ -87,14 +87,15 @@ export default function SignUp() {
             <Grid item xs={12}>
               <TextField
                 autoComplete="uname"
-                name="userName"
+                name="username"
                 variant="outlined"
                 required
                 fullWidth
-                id="userName"
+                id="username"
                 label="Username"
+                helperText={errors.username}
                 value={userUsername}
-                error={errors.userUsername}
+                error={errors.username ? true : false}
                 autoFocus
                 onChange={(e) => setUserUsername(e.target.value)}
               />
@@ -107,8 +108,9 @@ export default function SignUp() {
                 id="email"
                 label="Email Address"
                 name="email"
+                helperText={errors.email}
                 value={userEmail}
-                error={errors.userEmail}
+                error={errors.email ? true : false}
                 onChange={(e) => setUserEmail(e.target.value)}
                 autoComplete="email"
               />
@@ -123,8 +125,9 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
+                helperText={errors.password}
+                error={errors.password ? true : false}
                 value={userPassword}
-                error={errors.userPassword}
                 onChange={(e) => setUserPassword(e.target.value)}
               />
             </Grid>

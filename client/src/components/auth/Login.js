@@ -100,6 +100,7 @@ export default function SignIn() {
             name = "email"
             autoComplete = "email"
             autoFocus
+            helperText={errors.email}
             value = { userEmail }
             error={errors.userEmail ? true : false}
             onChange = {(e) => setUserEmail(e.target.value)}
@@ -110,11 +111,12 @@ export default function SignIn() {
             required
             fullWidth
             name = "password"
-            value = { userPassword }
             label = "Password"
             type = "password"
             id = "password"
-            error={errors.userPassword ? true : false}
+            helperText={errors.password}
+            value = { userPassword }
+            error={errors.password ? true : false}
             autoComplete = "current-password"
             onChange = {(e) => setUserPassword(e.target.value)}
           />
