@@ -3,10 +3,12 @@ const path = require('path');
 const dotenv = require('dotenv');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
+const flash = require('express-flash');
 const session = require('express-session');
 const logger = require('morgan');
 const cors  =   require('cors');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 var isProduction = process.env.NODE_ENV === 'production';
 
@@ -66,6 +68,9 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     cookie: { maxAge: 1209600000 }
 }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 // Use Routes
 app.use('/api/auth', authRoutes);
