@@ -20,22 +20,27 @@ const UserSchema = new mongoose.Schema({
     image: String,
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cocktail' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    hash: String,
-    salt: String
+    password: String
 }, { timestamps: true });
 
 
 UserSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
-UserSchema.methods.validPassword = (password) => {
-  var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-  return this.hash === hash;
-};
-
-UserSchema.methods.setPassword = (password) => {
-  this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-};
+/**
+ * Password hash middleware.
+ */
+UserSchema.pre('save', function save(next) {
+  const user = this;
+  if (!user.isModified('password')) { return next(); }
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) { return next(err); }
+    bcrypt.hash(user.password, salt, (err, hash) => {
+      if (err) { return next(err); }
+      user.password = hash;
+      next();
+    });
+  });
+});
 
 UserSchema.methods.generateJWT = () => {
   var today = new Date();
@@ -105,6 +110,20 @@ UserSchema.methods.isFollowing = (id) => {
   return this.following.some((followId) => {
     return followId.toString() === id.toString();
   });
+};
+
+/**
+ * Helper method for getting user's gravatar.
+ */
+UserSchema.methods.gravatar = function gravatar(size) {
+  if (!size) {
+    size = 200;
+  }
+  if (!this.email) {
+    return `https://gravatar.com/avatar/?s=${size}&d=retro`;
+  }
+  const md5 = crypto.createHash('md5').update(this.email).digest('hex');
+  return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
 const User = mongoose.model('User', UserSchema);
