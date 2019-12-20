@@ -13,36 +13,30 @@ const User = require('../../models/User');
 // @access  Public
 router.post('/login', (req, res) => {
 
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ msg: 'Please enter all fields' });
-    }
-
-    // Check for existing user
-    User.findOne({ email })
-        .then(user => {
-            if (!user) return res.status(400).json({ msg: 'User Does not exist' });
-
-            bcrypt.compare(password, user.password)
-                .then(isMatch => {
-                    if(!isMatch) 
-                    return res.status(400).json({ 
-                        msg: 'Invalid credentials' 
-                    });
-
-                    passport.authenticate('local', {session: false}, (err, user, info) => {
-                        if(err){ return next(err); }
-                    
-                        if(user){
-                          user.token = user.generateJWT();
-                          return res.json({user: user.toAuthJSON()});
-                        } else {
-                          return res.status(422).json(info);
-                        }
-                      })(req, res, next);
-                });
+    if(!email){
+        return res.status(422).json({
+            errors: { email: "can't be blank" }
         });
+      }
+    
+      if(!password){
+        return res.status(422).json({
+            errors: { password: "can't be blank" }
+        });
+      }
+    
+      passport.authenticate('local', {session: false}, (err, user, info) => {
+        if(err) { return next(err); }
+    
+        if(user) {
+          user.token = user.generateJWT();
+          return res.json({user: user.toAuthJSON()});
+        } else {
+          return res.status(422).json(info);
+        }
+      })(req, res, next);
 });
 
 // @route   GET api/auth/user
@@ -57,6 +51,15 @@ router.get('/user', auth.required, (req, res, next) => {
            }
            return res.json({ user: user.toAuthJSON() });
        }).catch(next);
+});
+
+// @route   GET api/auth/logout
+// @desc    Get logout route
+// @access  Private
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash("success", "See you later!");
+    res.redirect("/");
 });
 
 
