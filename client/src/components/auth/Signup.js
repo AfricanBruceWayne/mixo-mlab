@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 
 import { BrowserRouter as Router, Route, useHistory , Switch } from 'react-router-dom';
 import {
@@ -7,15 +7,13 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
-import { useDispatch } from 'react-redux';
-
-import useStyles from '../../util/styles';
+import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
 import { registerUser } from '../../actions/authActions';
-import { returnErrors } from '../../actions/errorActions';
+import { clearErrors } from '../../actions/errorActions';
 
-import Home from '../Home';
+import Home from '../../pages/Home';
 import Login from './Login';
 
 function Copyright() {
@@ -31,36 +29,72 @@ function Copyright() {
   );
 }
 
-export default function SignUp() {
+const styles = (theme) => ({
+  ...theme
+});
 
-  const classes = useStyles();
+class Signup extends Component {
 
-  const dispatch = useDispatch();
-
-  const [userUsername, setUserUsername] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
-  const errors = useState({});
-
-  let history = useHistory();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const newUser = {
-      userUsername,
-      userEmail,
-      userPassword
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      email: '',
+      password: '',
+      errors: {}
     };
-
-    dispatch(registerUser(newUser, this.props.history));
   }
 
+  static propTypes = {
+    isAuthenticated: PropTypes.bool,
+    errors: PropTypes.object.isRequired,
+    registerUser: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired
+  };
 
-  return (
-    <Router>
+  componentDidMount() 
+  {
+    // If logged in and user navigates to Register page, should redirect them to dashboard
+    if (this.props.auth.isAuthenticated)
+    {
+      this.props.history.push("/");
+    }
+  }
+
+  componentWillReceiveProps(nextProps) 
+  {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.setState({
+      loading: true
+    });
+  
+    const newUserData = {
+      username: this.state.username,
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    this.props.SignupUser(newUserData, this.props.history);
+  };
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+  
+  render() {
+
+    const { errors } = this.state;
+
+    return (
+      <Router>
       <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
@@ -70,7 +104,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form} noValidate>
+        <form onSubmit={this.handleSubmit} className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -82,10 +116,10 @@ export default function SignUp() {
                 id="username"
                 label="Username"
                 helperText={errors.username}
-                value={userUsername}
+                value={this.state.username}
                 error={errors.username ? true : false}
                 autoFocus
-                onChange={(e) => setUserUsername(e.target.value)}
+                onChange={this.handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -97,9 +131,9 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 helperText={errors.email}
-                value={userEmail}
+                value={this.state.email}
                 error={errors.email ? true : false}
-                onChange={(e) => setUserEmail(e.target.value)}
+                onChange={this.handleChange}
                 autoComplete="email"
               />
             </Grid>
@@ -115,8 +149,8 @@ export default function SignUp() {
                 id="password"
                 helperText={errors.password}
                 error={errors.password ? true : false}
-                value={userPassword}
-                onChange={(e) => setUserPassword(e.target.value)}
+                value={this.state.password}
+                onChange={this.handleChange}
               />
             </Grid>
           </Grid>
@@ -159,12 +193,19 @@ export default function SignUp() {
     </Switch>
   
     </Router>
-  );
+  
+    );
+  }
 }
+  
 
-SignUp.propTypes = {
-  isAuthenticated: PropTypes.bool,
-  error: PropTypes.object.isRequired,
-  register: PropTypes.func.isRequired,
-  clearErrors: PropTypes.func.isRequired
-};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser, clearErrors }
+)(withStyles(styles))(Signup);
