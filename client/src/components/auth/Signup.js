@@ -48,9 +48,6 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isFormValid()) {
-      return returnErrors('Failed to create user: ' + msg, 401, null);
-    }
     setLoading(true);
     const newUser = {
       userUsername,
@@ -58,17 +55,8 @@ export default function SignUp() {
       userPassword
     };
 
-    dispatch(registerUser(newUser, history));
+    dispatch(registerUser(newUser, this.props.history));
   }
-
-  function isFormValid() {
-    return (
-      userUsername == null || userUsername.length < 3 ||
-      userEmail == null || !userEmail.includes('@') ||
-      userPassword == null || userPassword.length < 6
-    );
-  }
-
 
 
   return (

@@ -108,7 +108,6 @@ export default function SignIn() {
           <TextField
             variant = "outlined"
             margin = "normal"
-            required
             fullWidth
             name = "password"
             label = "Password"
@@ -117,7 +116,6 @@ export default function SignIn() {
             helperText={errors.password}
             value = { userPassword }
             error={errors.password ? true : false}
-            autoComplete = "current-password"
             onChange = {(e) => setUserPassword(e.target.value)}
           />
             { errors.general && (
