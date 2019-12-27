@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearErrors, returnErrors } from './errorActions';
 
 import { 
     USER_LOADED, USER_LOADING,
@@ -20,15 +21,18 @@ export const loadUser = () => (dispatch, getState) => {
                 payload: res.data
             })
         ).catch((err) => {
-            dispatch({
+          dispatch(returnErrors(
+            err.response.data,
+            err.response.status
+          ));
+          dispatch({
                 type: AUTH_ERROR,
-                payload: err.response.data
             });
         });
 };
 
 // Register User
-export const registerUser = ({ newUserData, history }) => (dispatch) => {
+export const registerUser = (newUserData, history) => (dispatch) => {
     // Headers
     const config = {
       headers: {
@@ -42,16 +46,20 @@ export const registerUser = ({ newUserData, history }) => (dispatch) => {
     axios
       .post('/api/users/register', body, config)
       .then((res) => {
+        dispatch(loadUser());
         dispatch({
           type: REGISTER_SUCCESS,
           payload: res.data
-        })
+        });
+        clearErrors();
         history.push('/');
       })
       .catch((err) => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL')
+        );
         dispatch({
           type: REGISTER_FAIL,
-          payload: err.response.data
         });
       });
   };
@@ -71,16 +79,20 @@ const body = JSON.stringify({ userData });
     axios
       .post('/api/auth/login', body, config)
       .then((res) => {
+        dispatch(loadUser());
         dispatch({
           type: LOGIN_SUCCESS,
           payload: res.data
         });
+        clearErrors();
         history.push('/');
       })
       .catch((err) => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
+        );
         dispatch({
           type: LOGIN_FAIL,
-          payload: err.response.data
         });
       });
   };
@@ -110,4 +122,10 @@ export const tokenConfig = getState => {
     }
   
     return config;
+};
+
+const setAuthorizationHeader = (token) => {
+  const FBIdToken = `Bearer ${token}`;
+  localStorage.setItem('FBIdToken', FBIdToken);
+  axios.defaults.headers.common['Authorization'] = FBIdToken;
 };
