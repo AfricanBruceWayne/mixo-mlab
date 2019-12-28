@@ -1,16 +1,17 @@
 import axios from 'axios';
 import { 
-    GET_DRINKS, ADD_DRINK, UPDATE_DRINK, DELETE_DRINK,
-    DRINKS_LOADING, LOADING_DATA,
+    GET_DRINKS, GET_DRINK, ADD_DRINK, UPDATE_DRINK, DELETE_DRINK,
+    LOADING_DATA, LOADING_UI, STOP_LOADING_UI,
     LIKE_DRINK, UNLIKE_DRINK,
-    SUBMIT_COMMENT
- } from './types';
-import { tokenConfig } from './authActions';
-import { returnErrors, clearErrors } from './errorActions';
+    SUBMIT_COMMENT,
+    SET_ERRORS, CLEAR_ERRORS
+ } from '../types';
+
+import { tokenConfig } from './userActions';
 
 // Get All Drinks
 export const getDrinks = () => (dispatch) => {
-    dispatch(setDrinksLoading());
+    dispatch({ type: LOADING_DATA });
     axios
         .get('/api/cocktails')
         .then((res) => {
@@ -20,24 +21,26 @@ export const getDrinks = () => (dispatch) => {
             });
         })
         .catch((err) => {
-            dispatch(returnErrors(err.response.data, err.response.status))
+            dispatch({
+                type: GET_DRINKS,
+                payload: []
+            });
         });
 };
 
 // Get A Drink
 export const getDrink = (drinkId) => (dispatch) => {
-    dispatch(setDrinksLoading());
+    dispatch({ type: LOADING_UI });
     axios
         .get(`/api/cocktail/${drinkId}`)
         .then((res) => {
             dispatch({
-                type: GET_DRINKS,
+                type: GET_DRINK,
                 payload: res.data
             });
+            dispatch({ type: STOP_LOADING_UI });
         })
-        .catch((err) => {
-            dispatch(returnErrors(err.response.data, err.response.status))
-        });
+        .catch((err) => console.log(err));
 };
 
 // Add New Drink
@@ -51,9 +54,12 @@ export const addDrink = (newDrink) => (dispatch, getState) => {
             });
             dispatch(clearErrors());
         })
-        .catch(err =>
-            dispatch(returnErrors(err.response.data, err.response.status))
-        );
+        .catch((err) => {
+            dispatch({
+                type: SET_ERRORS,
+                payload: err.response.data
+            });
+        });
 };
 
 // Update A Drink
@@ -63,27 +69,23 @@ export const updateDrink = (drinkId)  = (dispatch, getState) => {
         .then((res) => {
             dispatch({
                 type: UPDATE_DRINK,
-                payload: id
+                payload: drinkId
             })
         })
-        .catch(err => 
-            dispatch(returnErrors(err.response.data, err.response.status))
-        );
+        .catch((err) => console.log(err));
 };
 
 // Delete A Drink
-export const deleteDrink = (id) => (dispatch, getState) => {
+export const deleteDrink = (drinkId) => (dispatch, getState) => {
     axios
-        .delete(`/api/cocktails/${id}`, tokenConfig(getState))
+        .delete(`/api/cocktails/${drinkId}`, tokenConfig(getState))
         .then(() => {
             dispatch({
                 type: DELETE_DRINK,
-                payload: id
+                payload: drinkId
             });
         })
-        .catch((err) =>
-            dispatch(returnErrors(err.response.data, err.response.status))
-        );
+        .catch((err) => console.log(err));
 };
 
 // Favourite A Drink
@@ -113,23 +115,42 @@ axios
 };
 
   // Submit a comment
-  export const submitComment = (drinkId, commentData) => (dispatch, getState) => {
+export const submitComment = (drinkId, commentData) => (dispatch, getState) => {
     axios
-      .post(`/api/cocktail/${drinkId}/comment`, commentData, tokenConfig(getState))
+        .post(`/api/cocktail/${drinkId}/comment`, commentData, tokenConfig(getState))
+        .then((res) => {
+            dispatch({
+                type: SUBMIT_COMMENT,
+                payload: res.data
+            });
+            dispatch(clearErrors());
+        })
+        .catch((err) => {
+            dispatch({
+                type: SET_ERRORS,
+                payload: err.response.data
+            });
+        });
+};
+  
+export const getUserData = (userHandle) => (dispatch) => {
+    dispatch({ type: LOADING_DATA });
+    axios
+      .get(`/user/${userHandle}`)
       .then((res) => {
         dispatch({
-          type: SUBMIT_COMMENT,
-          payload: res.data
+          type: GET_DRINKS,
+          payload: res.data.drinks
         });
-        dispatch(clearErrors());
       })
-      .catch((err) => {
-        dispatch(returnErrors(err.response.data, err.response.status));
+      .catch(() => {
+        dispatch({
+          type: GET_DRINKS,
+          payload: null
+        });
       });
   };
   
-export const setDrinksLoading = () => {
-    return {
-        type: DRINKS_LOADING
-    };
-};
+  export const clearErrors = () => (dispatch) => {
+    dispatch({ type: CLEAR_ERRORS });
+  };
