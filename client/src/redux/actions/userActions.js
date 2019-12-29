@@ -6,7 +6,6 @@ import {
     SET_UNAUTHENTICATED,
     MARK_NOTIFICATIONS_READ
 } from '../types';
-import { getUserData } from './drinkActions';
 
 // Check token & load user
 export const getUserData = () => (dispatch) => {
