@@ -7,7 +7,7 @@ import { Button, Grid, TextField, withStyles } from '@material-ui/core';
 
 // Redux stuff
 import { connect } from 'react-redux';
-import { submitComment } from '../../redux/actions/dataActions';
+import { submitComment } from '../../redux/actions/drinkActions';
 
 const styles = (theme) => ({
   ...theme

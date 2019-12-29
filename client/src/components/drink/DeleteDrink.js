@@ -9,7 +9,7 @@ import { Button, Dialog, DialogTitle, DialogActions, withStyles } from '@materia
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
 
 import { connect } from 'react-redux';
-import { deleteDrink } from '../../actions/drinkActions';
+import { deleteDrink } from '../../redux/actions/drinkActions';
 
 const styles = {
   deleteButton: {

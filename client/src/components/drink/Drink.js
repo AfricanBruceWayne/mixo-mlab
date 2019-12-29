@@ -16,7 +16,7 @@ import { Card, CardContent, CardMedia, Typography, withStyles } from '@material-
 
 // Icons
 import ChatIcon from '@material-ui/icons/Chat';
-import { CardContent, CardMedia, Typography } from '@material-ui/icons';
+
 // Redux    
 import { connect } from 'react-redux';
 
