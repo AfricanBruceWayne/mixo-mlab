@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 
-import { BrowserRouter as Router, Route, useHistory , Switch } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
+// MUI Stuff
 import {
   Avatar, Button, Container, CssBaseline, TextField, CircularProgress,
-  Typography, Link, Grid, Box
+  Typography, Link, Grid, Box, withStyles
 } from '@material-ui/core';
+
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
+// Redux stuff
 import { connect } from 'react-redux';
+import { registerUser } from '../redux/actions/userActions';
 
-import PropTypes from 'prop-types';
-import { registerUser } from '../actions/authActions';
-import { clearErrors } from '../actions/errorActions';
-
-import Home from './Home';
-import Login from './Login';
+const styles = (theme) => ({
+  ...theme
+});
 
 function Copyright() {
   return (
@@ -29,10 +31,6 @@ function Copyright() {
   );
 }
 
-const styles = (theme) => ({
-  ...theme
-});
-
 class Signup extends Component {
 
   constructor() {
@@ -41,30 +39,14 @@ class Signup extends Component {
       username: '',
       email: '',
       password: '',
+      handle: '',
       errors: {}
     };
   }
 
-  static propTypes = {
-    isAuthenticated: PropTypes.bool,
-    errors: PropTypes.object.isRequired,
-    registerUser: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired
-  };
-
-  componentDidMount() 
-  {
-    // If logged in and user navigates to Register page, should redirect them to dashboard
-    if (this.props.auth.isAuthenticated)
-    {
-      this.props.history.push("/");
-    }
-  }
-
-  componentWillReceiveProps(nextProps) 
-  {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.UI.errors) {
+      this.setState({ errors: nextProps.UI.errors });
     }
   }
 
@@ -78,9 +60,10 @@ class Signup extends Component {
       username: this.state.username,
       email: this.state.email,
       password: this.state.password,
+      handle: this.state.handle
     };
 
-    this.props.SignupUser(newUserData, this.props.history);
+    this.props.registerUser(newUserData, this.props.history);
   };
 
   handleChange = (e) => {
@@ -91,10 +74,14 @@ class Signup extends Component {
   
   render() {
 
+    const {
+      classes,
+      UI: { loading }
+    } = this.props;
     const { errors } = this.state;
 
     return (
-      <Router>
+      <Grid>
       <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
@@ -186,26 +173,25 @@ class Signup extends Component {
         <Copyright />
       </Box>
     </Container>
-
-    <Switch>
-        <Route exact path="/" component={ Home } />
-        <Route path="/login" component={ Login } />
-    </Switch>
-  
-    </Router>
+    </Grid>
   
     );
   }
 }
   
-
+Signup.propTypes = {
+  classes: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired,
+  registerUser: PropTypes.func.isRequired
+};
 
 const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  errors: state.errors
+  user: state.user,
+  UI: state.UI
 });
 
 export default connect(
   mapStateToProps,
-  { registerUser, clearErrors }
+  { registerUser }
 )(withStyles(styles))(Signup);
