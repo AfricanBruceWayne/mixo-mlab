@@ -62,19 +62,6 @@ export const addDrink = (newDrink) => (dispatch, getState) => {
         });
 };
 
-// Update A Drink
-export const updateDrink = (drinkId)  = (dispatch, getState) => {
-    axios
-        .put(`/api/cocktails/${drinkId}`, tokenConfig(getState))
-        .then((res) => {
-            dispatch({
-                type: UPDATE_DRINK,
-                payload: drinkId
-            })
-        })
-        .catch((err) => console.log(err));
-};
-
 // Delete A Drink
 export const deleteDrink = (drinkId) => (dispatch, getState) => {
     axios
@@ -106,10 +93,10 @@ export const unlikeDrink = (drinkId) => (dispatch, getState) => {
 axios
     .get(`/api/cocktail/${drinkId}/unfavourite`, tokenConfig(getState))
     .then((res) => {
-    dispatch({
-        type: UNLIKE_DRINK,
-        payload: res.data
-    });
+        dispatch({
+            type: UNLIKE_DRINK,
+            payload: res.data
+        });
     })
     .catch((err) => console.log(err));
 };
