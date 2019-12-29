@@ -52,7 +52,6 @@ export default function(state = initialState, action) {
           ...state,
           drinks: state.drinks.filter(drink => drink._id !== action.payload)
         };
-     
       case LIKE_DRINK:
       case UNLIKE_DRINK:
         let index = state.drinks.findIndex(
