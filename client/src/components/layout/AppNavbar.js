@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { useState, Component, Fragment } from 'react';
 import {
     BrowserRouter as Router,
     Link,
@@ -6,7 +6,7 @@ import {
     Route,
 } from 'react-router-dom';
 
-import '../App.css';
+import '../../App.css';
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
@@ -32,8 +32,8 @@ import MyButton from '../../util/MyButton';
 import PostDrink from '../drink/PostDrink';
 import Notifications from './Notifications';
 
-import SignUp from '../auth/Signup';
-import Login from '../auth/Login';
+import SignUp from '../../pages/Signup';
+import Login from '../../pages/Login';
 import Home from '../../pages/Home';  
 
 class AppNavbar extends Component {
@@ -131,7 +131,7 @@ class AppNavbar extends Component {
     }
 }
 
-AppNavbar.PropTypes = {
+AppNavbar.propTypes = {
     authenticated: PropTypes.bool.isRequired
 };
 
